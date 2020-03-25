@@ -38,3 +38,41 @@ debate_plot <- debate_tools  %>%
 ggplot(debate_plot, aes(x=language_preference,y=count)) + 
     geom_bar(stat = "identity")
 
+# Create a new column called language preference
+debate_tools <- responses  %>% 
+   mutate(language_preference = case_when(
+       str_detect(WorkToolsSelect, "R")& str_detect(WorkToolsSelect, "Python", negate = TRUE) ~ "R",
+       str_detect(WorkToolsSelect, "Python")& str_detect(WorkToolsSelect, "R", negate = TRUE) ~ "Python",
+       str_detect(WorkToolsSelect, "R") & str_detect(WorkToolsSelect, "Python") ~ "both",
+       TRUE ~ "neither"
+       
+   ))
+
+# Print the first 6 rows
+head(debate_tools, 6)
+
+# Group by language preference, calculate number of responses, and remove "neither"
+debate_plot <- debate_tools  %>% 
+   group_by(language_preference)  %>% 
+   summarize(count = n())  %>% 
+    filter(language_preference != "neither")
+
+# Create a bar chart
+ggplot(debate_plot, aes(x=language_preference,y=count)) + 
+    geom_bar(stat = "identity")
+
+# Group by, summarise, arrange, mutate, and filter
+recommendations <- debate_tools  %>% 
+    group_by(language_preference, LanguageRecommendationSelect)%>%
+    summarise(count = n())%>%
+    arrange(language_preference,desc(count))%>%
+    filter(row_number()<=4)
+    
+
+# Create a faceted bar plot
+ggplot(recommendations, aes(x = LanguageRecommendationSelect, y = n)) +
+    geom_bar(stat = "identity") +
+    facet_wrap(~language_preference)
+
+
+
