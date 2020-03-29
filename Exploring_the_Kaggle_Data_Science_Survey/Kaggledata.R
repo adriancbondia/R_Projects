@@ -1,6 +1,6 @@
 #Step 1. Load the necessary packages and data.
 library(tidyverse)
-responses <- read_csv("kagglesurvey.csv")
+responses <- read_csv("datasets/kagglesurvey.csv")
 
 #Step 2. Examinate the data format and how the multiple items are separated.
 # Print the first 10 rows
